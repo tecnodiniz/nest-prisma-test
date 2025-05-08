@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model agente_terreiros {
+  id               String         @id @db.Uuid
+  id_terreiro_role String         @db.Uuid
+  id_user          String         @db.Uuid
+  id_terreiro      String         @db.Uuid
+  status           agent_status   @default(PENDING)
+  terreiros        terreiros      @relation(fields: [id_terreiro], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  terreiro_roles   terreiro_roles @relation(fields: [id_terreiro_role], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users            users          @relation(fields: [id_user], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([id_user, id_terreiro], map: "uq_user_terreiro")
+}
+
+model alembic_version {
+  version_num String @id(map: "alembic_version_pkc") @db.VarChar(32)
+}
+
+model auth {
+  id            String    @id @db.Uuid
+  user_id       String    @unique @db.Uuid
+  email         String?   @unique @db.VarChar(255)
+  password_hash String?
+  google_id     String?   @db.VarChar(255)
+  avatar_url    String?
+  is_active     Boolean?
+  created_at    DateTime? @db.Timestamp(6)
+  users         users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([id], map: "ix_auth_id")
+}
+
+model terreiro_roles {
+  id               String             @id @db.Uuid
+  position         String?            @db.VarChar(50)
+  description      String?
+  agente_terreiros agente_terreiros[]
+
+  @@index([id], map: "ix_terreiro_roles_id")
+}
+
+model terreiros {
+  id               String             @id @db.Uuid
+  name             String             @db.VarChar(255)
+  address          String
+  contact          String?            @db.VarChar(50)
+  opening_hours    String?
+  history          String?
+  leader           String             @db.Uuid
+  infrastructure   String?
+  segment          String?            @db.VarChar(100)
+  agente_terreiros agente_terreiros[]
+  users            users              @relation(fields: [leader], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([id], map: "ix_terreiros_id")
+  @@index([name], map: "ix_terreiros_name")
+}
+
+model users {
+  id               String             @id @db.Uuid
+  name             String?            @db.VarChar(255)
+  cpf              String?            @db.VarChar(14)
+  plan             user_plan
+  contact          String?            @db.VarChar(15)
+  bio              String?            @db.VarChar(255)
+  profile_picture  String?            @db.VarChar(255)
+  agente_terreiros agente_terreiros[]
+  auth             auth?
+  terreiros        terreiros[]
+
+  @@index([id], map: "ix_users_id")
+  @@index([name], map: "ix_users_name")
+}
+
+enum agent_status {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum user_plan {
+  BASIC
+  PREMIUM
+  PROFESSIONAL
+}
