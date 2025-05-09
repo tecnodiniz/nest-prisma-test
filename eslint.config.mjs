@@ -11,6 +11,7 @@ export default tseslint.config(
       'test/',
       'src/**/*.spec.ts',
       'src/**/*.e2e-spec.ts',
+      'src/**/seed.ts',
     ],
   },
   eslint.configs.recommended,

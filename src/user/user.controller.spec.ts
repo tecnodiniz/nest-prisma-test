@@ -13,10 +13,7 @@ describe('UserController', () => {
         UserService,
         {
           provide: PrismaService,
-          useValue: {
-            fetchAllUsers: jest.fn(),
-            fetchUser: jest.fn(),
-          },
+          useValue: {},
         },
       ],
     }).compile();
