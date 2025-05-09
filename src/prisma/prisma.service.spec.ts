@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from './prisma.service';
-
 describe('PrismaService', () => {
   let prisma: PrismaService;
 
@@ -14,8 +13,8 @@ describe('PrismaService', () => {
   });
 
   it('should connect to the database and run a simple query', async () => {
-    // Altere para o modelo que você tiver no seu schema.prisma
-    const users = await prisma.users.findMany();
+    const users = await prisma.user.findMany();
+
     expect(Array.isArray(users)).toBe(true);
   });
 });
