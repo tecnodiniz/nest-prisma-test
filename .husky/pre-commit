@@ -1,1 +1,1 @@
-npm run format && npm run test && npm run test:e2e && npx lint-staged
+npm run format && npm run test && npm run test:e2e:all && npx lint-staged

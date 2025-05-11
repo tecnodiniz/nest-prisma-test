@@ -25,7 +25,22 @@ describe('UserController (e2e)', () => {
     await app.init();
   });
 
-  it('/user (GET) should return a list of users', () => {
-    return request(app.getHttpServer()).get('/api/user').expect(200);
+  describe('GET /user', () => {
+    it('should return a list of users', () => {
+      return request(app.getHttpServer()).get('/api/user').expect(200);
+    });
+  });
+
+  describe('POST /user', () => {
+    it('should create a new user', async () => {
+      return await request(app.getHttpServer())
+        .post('/api/user')
+        .send({
+          name: 'John Doe',
+          email: 'john.doe@example.com',
+          password: 'password',
+        })
+        .expect(201);
+    });
   });
 });

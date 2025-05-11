@@ -21,11 +21,15 @@
     "db:studio": "npx dotenv-cli -e .env -- npx prisma studio --schema=src/prisma/schema.prisma",
     "db:seed": "npx dotenv-cli -e .env -- ts-node src/prisma/seed.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "npx dotenv-cli -e .env -- jest",
+    "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:e2e": "DATABASE_URL='postgresql://test:postgres@localhost:5433/test_db' jest --config ./test/jest-e2e.json",
+    "test:e2e:db:up": "docker-compose -f docker-compose.test.yml up -d",
+    "test:e2e:db:down": "docker-compose -f docker-compose.test.yml down -v",
+    "test:e2e:prepare": "DATABASE_URL='postgresql://test:postgres@localhost:5433/test_db' prisma migrate deploy --schema=src/prisma/schema.prisma",
+    "test:e2e:all": "npm run test:e2e:db:up && sleep 3 && npm run test:e2e:prepare && npm run test:e2e && npm run test:e2e:db:down",
     "prepare": "husky"
   },
   "dependencies": {
