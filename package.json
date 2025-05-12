@@ -12,6 +12,8 @@
     "dev": "nest start --watch",
     "debug": "nest start --debug --watch",
     "prod": "node dist/main",
+    "db:up": "docker compose -f docker-compose.yml up -d",
+    "db:down": "docker compose -f docker-compose.yml down -d",
     "db:generate-types": "npx prisma generate --schema=src/prisma/schema.prisma",
     "db:generate-migrations": "npx dotenv-cli -e .env -- npx prisma migrate dev --create-only --skip-seed --schema=src/prisma/schema.prisma",
     "db:deploy-migrations": "npx dotenv-cli -e .env -- npx prisma migrate deploy --schema=src/prisma/schema.prisma",

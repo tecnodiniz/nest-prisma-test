@@ -27,7 +27,39 @@ describe('UserController (e2e)', () => {
 
   describe('GET /user', () => {
     it('should return a list of users', () => {
-      return request(app.getHttpServer()).get('/api/user').expect(200);
+      return request(app.getHttpServer())
+        .get('/api/user')
+        .expect(200)
+        .expect((res) => {
+          expect(Array.isArray(res.body)).toBe(true);
+        });
+    });
+
+    it('should return a user by his id', async () => {
+      const result = await request(app.getHttpServer())
+        .post('/api/user/1')
+        .send({
+          id: '1',
+          name: 'John Doe',
+          email: 'johndoe@example.com',
+          password: 'password',
+        });
+
+      if (result.status !== 200) return;
+
+      return await request(app.getHttpServer())
+        .get('/api/user/1')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body).toHaveProperty('id');
+        });
+    });
+
+    it('should return 404 if user not found by his id', async () => {
+      return await request(app.getHttpServer())
+        .get('/api/user/1000')
+        .expect(404)
+        .expect((res) => expect(res.body.message).toEqual('User not found'));
     });
   });
 
@@ -41,6 +73,17 @@ describe('UserController (e2e)', () => {
           password: 'password',
         })
         .expect(201);
+    });
+
+    it('should return an error if body has wrong att', async () => {
+      return await request(app.getHttpServer())
+        .post('/api/user')
+        .send({
+          username: 'John Doe',
+          email: 'john.doe@example.com',
+          password: 'password',
+        })
+        .expect(400);
     });
   });
 });
